@@ -1,0 +1,74 @@
+# Google OAuth 凭据（绝对不能上传到 git！）
+credentials.json
+token.json
+
+# 用户自定义白名单（本地配置）
+user_whitelist.json
+
+# AI 提供商配置（含 API Key，绝不上传）
+user_config.json
+
+# Python 虚拟环境
+venv/
+.venv/
+env/
+
+# Python 字节码缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 日志文件（可能含有邮件内容，不适合提交）
+logs/*.log
+
+# macOS 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 本地开发杂物（备份、临时、旧 venv）
+.gitignore.save
+.codex-tmp/
+.codex-sandbox-check-*/
+venv-py39-backup/
+
+# IDE 配置
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 测试覆盖率报告
+.coverage
+htmlcov/
+
+# 打包产物
+dist/
+build/
+*.egg-info/
+
+# SQLite 数据库
+gmail-unsubscriber.db
+
+# v2 private account state and isolated development artifacts
+.local/
+.venv-v2/
+.pytest_cache/
+.playwright-mcp/
+
+# P2 private, redacted live-trial evidence
+/work/redesign-v2/p2/
+
+# P3 private, redacted live-trial evidence
+/work/redesign-v2/p3/
+
+# P4 private, redacted live-trial evidence
+/work/redesign-v2/p4/
+
+# P5 private delivery evidence and isolated rebuild
+/work/redesign-v2/p5/
+.venv-v2-p5/
+
+# Local stage plans and acceptance evidence may describe private mailbox activity.
+/work/
