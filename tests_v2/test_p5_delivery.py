@@ -77,8 +77,17 @@ def test_backup_restart_uncertain_protection_history_and_old_plan(tmp_path):
 
 @pytest.mark.parametrize('launcher,mode', [('体验演示.command','demo'),('启动轻邮.command','live')])
 def test_launcher_lifecycle_and_second_instance(tmp_path, launcher, mode):
+    # Use the interpreter running this suite, including a new work/ rebuild.
+    # A clean checkout need not contain either daily-use environment yet.
+    project = tmp_path / 'project'
+    (project / 'scripts').mkdir(parents=True)
+    for name in (launcher, 'app.py', 'scripts/launch-v2.sh'):
+        shutil.copy(ROOT / name, project / name)
+    shutil.copytree(ROOT / 'gmail_unsubscriber', project / 'gmail_unsubscriber',
+                    ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    (project / '.venv-v2-p5').symlink_to(Path(sys.prefix), target_is_directory=True)
     log=tmp_path/'process.log'
-    command=['/bin/zsh',str(ROOT/launcher),'--no-browser','--data-dir',str(tmp_path/'data'),'--credentials',str(tmp_path/'missing.json')]
+    command=['/bin/zsh',str(project/launcher),'--no-browser','--data-dir',str(tmp_path/'data'),'--credentials',str(tmp_path/'missing.json')]
     for restart in range(2):
         with log.open('w') as output:
             proc=subprocess.Popen(command,cwd='/tmp',stdout=output,stderr=subprocess.STDOUT)
@@ -91,7 +100,13 @@ def test_launcher_lifecycle_and_second_instance(tmp_path, launcher, mode):
                     time.sleep(.05)
                 assert found, text
                 origin=found.group()
-                html=urllib.request.urlopen(origin).read().decode()
+                with urllib.request.urlopen(origin) as response:
+                    html=response.read().decode()
+                    instance_id=response.headers['X-Lightmail-Instance']
+                published=json.loads((tmp_path/'data'/'app.lock').read_text())
+                assert published['origin']==origin
+                assert published['instance_id']==instance_id
+                assert published['pid']==proc.pid
                 token=re.search(r'name="session-token" content="([^"]+)"',html).group(1)
                 request=urllib.request.Request(origin+'/api/state',headers={'X-Session-Token':token})
                 state=json.load(urllib.request.urlopen(request))
@@ -108,6 +123,7 @@ def test_launcher_lifecycle_and_second_instance(tmp_path, launcher, mode):
                 if proc.poll() is None: proc.send_signal(signal.SIGINT)
                 proc.wait(timeout=10)
             assert proc.returncode==0
+            assert (tmp_path/'data'/'app.lock').read_text()==''
         store=Store(str(tmp_path/'data'/'workspace.sqlite3'))
         assert store.connection.execute('pragma integrity_check').fetchone()[0]=='ok'
         store.close()

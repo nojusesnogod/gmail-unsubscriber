@@ -14,7 +14,7 @@ Python 3.10+ is required. The command-line offline demo uses only the standard l
 python3 app.py --demo
 ```
 
-On macOS, double-click **体验演示.command** for the synthetic demo or **启动轻邮.command** for the real-account welcome screen. A real account is accessed only after you click Connect Gmail and complete authorization.
+On macOS, build and open the [one-click Lightmail app](docs/MACOS_APP.md) for a single window. The existing **体验演示.command** and **启动轻邮.command** remain available. A real account is accessed only after you click Connect Gmail and complete authorization.
 
 For Gmail access, prepare a project virtual environment and dependencies:
 

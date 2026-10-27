@@ -17,6 +17,7 @@ class LocalServer(ThreadingHTTPServer):
     def __init__(self, application, port=0):
         self.application = application
         self.session_token = secrets.token_urlsafe(32)
+        self.instance_id = secrets.token_hex(16)
         super().__init__(("127.0.0.1", port), Handler)
         self.authority = f"127.0.0.1:{self.server_port}"
         self.origin = f"http://{self.authority}"
@@ -36,6 +37,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header("X-Frame-Options", "DENY")
+        self.send_header("X-Lightmail-Instance", self.server.instance_id)
         self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
         self.end_headers()
         try:

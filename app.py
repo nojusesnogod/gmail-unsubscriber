@@ -35,7 +35,10 @@ def main():
     try:
         application = Application(data_dir, mode, args.credentials)
         server = LocalServer(application, args.port)
+        lock.publish_origin(server.origin, server.instance_id)
     except Exception:
+        if server is not None:
+            server.server_close()
         if application is not None:
             application.close()
         lock.__exit__()

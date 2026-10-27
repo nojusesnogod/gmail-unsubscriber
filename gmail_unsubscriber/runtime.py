@@ -1,4 +1,5 @@
 """Single application instance per private data directory (macOS/Linux)."""
+import json
 import os
 from pathlib import Path
 
@@ -22,9 +23,21 @@ class InstanceLock:
             raise RuntimeError("这个数据目录已有轻邮在运行，请回到已打开的窗口。") from None
         return self
 
+    def publish_origin(self, origin: str, instance_id: str):
+        """Publish only a loopback address and process identity for the local window."""
+        if self.fd is None or not origin.startswith("http://127.0.0.1:"):
+            raise RuntimeError("No active local instance lock")
+        data = json.dumps({"origin": origin, "instance_id": instance_id,
+                           "pid": os.getpid()}, separators=(",", ":")).encode()
+        os.lseek(self.fd, 0, os.SEEK_SET)
+        os.write(self.fd, data)
+        os.ftruncate(self.fd, len(data))
+        os.fsync(self.fd)
+
     def __exit__(self, *args):
         if self.fd is not None:
             import fcntl
+            os.ftruncate(self.fd, 0)
             fcntl.flock(self.fd, fcntl.LOCK_UN)
             os.close(self.fd)
             self.fd = None

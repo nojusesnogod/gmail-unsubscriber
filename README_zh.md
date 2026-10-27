@@ -18,7 +18,7 @@ python3 app.py --demo
 
 ## 连接自己的 Gmail
 
-在项目虚拟环境中安装真实邮箱适配器：
+需要单独窗口时，按 [macOS app instructions](docs/MACOS_APP.md) 构建并打开本机轻邮 App。真实邮箱适配器仍需在项目虚拟环境中安装：
 
 ```bash
 python3 -m venv .venv-v2

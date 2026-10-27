@@ -1,5 +1,7 @@
 # 轻邮 v2 使用说明
 
+简短上手步骤见 [P5 日常试用卡片](P5_QUICKSTART.md)。单独的 Mac 窗口见 [MACOS_APP.md](MACOS_APP.md)。
+
 ## 本机受限试用：先读这几句
 
 - **日常启动**：双击项目里的“启动轻邮.command”；页面显示真实邮箱模式，点击“连接 Gmail”后才能看同一账号的本地清单。启动或连接不会自动扫描、预览或退订。
@@ -47,8 +49,8 @@ python3 -m venv .venv-v2
 终端等价命令：
 
 ```bash
-python3 app.py --demo
-.venv-v2/bin/python app.py --live
+/bin/zsh scripts/launch-v2.sh demo
+/bin/zsh scripts/launch-v2.sh live
 ```
 
 没有虚拟环境时先按本文“重建环境”操作。`Control+C` 关闭本机服务。它没有后台常驻、自启动或定时任务。
